@@ -1,8 +1,6 @@
 // ─────────────────────────────────────────────
 //  Suraksha — controllers/complaintController.js
 // ─────────────────────────────────────────────
-const SafetyScore = require('../models/SafetyScore');
-const { calculateSafetyScore } = require('../utils/safetyScore');
 const NEARBY_DELTA = 0.01;
 const Complaint = require('../models/Complaint');
 const { triageComplaint } = require('../utils/triage');
@@ -43,43 +41,8 @@ const fileComplaint = async (req, res, next) => {
 
     await complaint.save();
 
-    // ── SafetyScore update ────────────────────────────────────────────
-    if (coordinates?.lat && coordinates?.lng) {
-      let area = await SafetyScore.findOne({
-        'coordinates.lat': { $gte: coordinates.lat - NEARBY_DELTA, $lte: coordinates.lat + NEARBY_DELTA },
-        'coordinates.lng': { $gte: coordinates.lng - NEARBY_DELTA, $lte: coordinates.lng + NEARBY_DELTA },
-      });
-
-      if (!area) {
-        area = await SafetyScore.create({
-          locationName:   location || 'Reported area',
-          coordinates:    { lat: coordinates.lat, lng: coordinates.lng },
-          incidentCount:  0,
-          lightingRating: 3,
-          crowdDensity:   'medium',
-          lastIncidentAt: null,
-          score:          100,
-        });
-      }
-
-      if (area) {
-        area.incidentCount += 1;
-        area.lastIncidentAt = new Date();
-        const categoryPenalty = { assault: 20, stalking: 15, harassment: 10, unsafe_area: 8, other: 5 };
-        const penalty = categoryPenalty[category] || 5;
-        area.score = Math.max(0, Math.min(
-          area.score - penalty,
-          calculateSafetyScore({
-            incidentCount:  area.incidentCount,
-            lightingRating: area.lightingRating,
-            crowdDensity:   area.crowdDensity,
-            lastIncidentAt: area.lastIncidentAt,
-          })
-        ));
-        await area.save();
-      }
-    }
-    // ── end SafetyScore update ────────────────────────────────────────
+    // Note: the complaint's coordinates feed the road safety score directly
+    // (services/roadData.js counts complaints from the last 30 days near each road).
 
     return res.status(201).json({
       message: 'Complaint filed successfully',

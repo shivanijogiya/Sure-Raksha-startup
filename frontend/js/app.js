@@ -21,7 +21,11 @@ const API = {
   safetyFlag:     `${API_BASE}/safety/flag`,
   safetyPredict:  `${API_BASE}/safety/predict`,
   safetyRoute:    `${API_BASE}/safety/route`,
-  safetyTags:     `${API_BASE}/safety/tags`,
+  safetySegments: `${API_BASE}/safety/segments`,
+  safetySegment:  `${API_BASE}/safety/segment`,
+  safetyFlags:    `${API_BASE}/safety/flags`,
+  safetyRate:     `${API_BASE}/safety/rate`,
+  safetyRateBatch:`${API_BASE}/safety/rate-batch`,
   report:         `${API_BASE}/report/generate`,
   contacts:       `${API_BASE}/contacts`,
 };
@@ -130,7 +134,7 @@ async function apiFetch(url, options = {}) {
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(err.message || `HTTP ${response.status}`);
+    throw new Error(err.message || err.error || `HTTP ${response.status}`);
   }
 
   return response.json();

@@ -44,7 +44,7 @@
 
     <section class="page-header">
       <h1>📍 Safe Route Finder</h1>
-      <p class="subtitle">Find the safest path — not the shortest. Dangerous zones are highlighted.</p>
+      <p class="subtitle">Compares real walking routes and recommends the safest reasonable one. Scores come from street lamps, shops, bus stops, recent reports and women's ratings.</p>
     </section>
 
     <div class="card">
@@ -58,7 +58,7 @@
           <input id="toInput" type="text" class="form-input" placeholder="Click on map or type coordinates" readonly />
         </div>
       </div>
-      <p class="hint">Click the map to set <strong>From</strong>, then click again to set <strong>To</strong>.</p>
+      <p class="hint">Click the map to set <strong>From</strong>, then click again to set <strong>To</strong>. <a href="#" id="useMyLoc" style="color:var(--clr-accent,#f5a623);">Use my location as From</a></p>
       <button class="btn-primary" id="checkRouteBtn" onclick="checkRoute()" disabled>Check Route Safety</button>
       <button class="btn-secondary" onclick="resetRoute()">Reset</button>
     </div>
@@ -68,9 +68,11 @@
 
     <!-- Result -->
     <div id="routeResult" class="card hidden">
-      <h2>Route Safety Result</h2>
+      <h2>Walking routes</h2>
       <div id="scoreDisplay"></div>
+      <div id="routeCards" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;"></div>
       <div id="dangerList"></div>
+      <p id="routeNote" style="font-size:12px;opacity:.7;margin-top:12px;"></p>
     </div>
 
   </div>
@@ -78,6 +80,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/trip.js"></script>
   <script src="js/route.js"></script>
 </body>
 </html>
